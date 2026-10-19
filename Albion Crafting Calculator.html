@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Albion Crafting Calculator</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f4ef;--card:#fff;--tx:#222;--mut:#777;--bd:#ddd;--ac:#b8860b;--good:#1a7f37;--bad:#c62828}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17171a;--card:#222227;--tx:#eee;--mut:#9a9aa3;--bd:#3a3a42;--ac:#e0b040;--good:#4ade80;--bad:#f87171}}
+:root[data-theme="dark"]{--bg:#17171a;--card:#222227;--tx:#eee;--mut:#9a9aa3;--bd:#3a3a42;--ac:#e0b040;--good:#4ade80;--bad:#f87171}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,sans-serif;padding:14px}
+.w{max-width:760px;margin:auto}h1{font-size:20px;margin:4px 0 12px;color:var(--ac)}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:12px}
+.c h2{font-size:14px;margin:0 0 8px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:2px}
+select,input[type=number]{width:100%;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font-size:15px}
+.ck{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--tx);margin:0}
+.r{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--bd)}
+.r:last-child{border:0}.r b{font-variant-numeric:tabular-nums}
+.p{font-size:20px;font-weight:700;padding-top:8px}.good{color:var(--good)}.bad{color:var(--bad)}
+.sc{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.n{font-size:12px;color:var(--mut)}
+.btn{padding:9px 14px;border:0;border-radius:6px;background:var(--ac);color:#111;font-size:15px;font-weight:600;cursor:pointer}.btn.s{background:var(--bd);color:var(--tx);padding:4px 9px;font-size:13px}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:5px 6px;text-align:right;border-bottom:1px solid var(--bd);white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:var(--mut);font-weight:500}
+</style></head><body><div class="w">
+<h1>⚔ Albion Crafting Calculator (T4 / T5)</h1>
+
+<div class="c"><h2>1 · Bonuses</h2><div class="g">
+<label class="ck"><input type="checkbox" id="foc"> Use focus</label>
+<label class="ck"><input type="checkbox" id="prem" checked> Premium account</label>
+<div><label>City</label><select id="city"><option value="1">Bonus city for this item</option><option value="0">No bonus city</option></select></div>
+<div><label>Focus cost per craft</label><input type="number" id="fc" value="0" min="0"></div>
+</div><div class="n" id="rrrn"></div></div>
+
+<div class="c"><h2>2 · Item</h2><div class="g">
+<div><label>Tier</label><select id="tier"><option value="4">T4</option><option value="5">T5</option></select></div>
+<div><label>Enchantment</label><select id="ench"><option value="0">.0 (normal)</option><option value="1">.1</option><option value="2">.2</option><option value="3">.3</option><option value="4">.4</option></select></div>
+<div><label>Category</label><select id="cat"><option>Plate</option><option>Leather</option><option>Cloth</option></select></div>
+<div><label>Slot</label><select id="slot"><option value="16">Chest</option><option value="8">Head</option><option value="8">Shoes</option></select></div>
+<div><label>Sub-item</label><select id="sub"></select></div>
+<div><label>Materials per craft</label><input type="number" id="mpc" value="16" min="1"></div>
+</div></div>
+
+<div class="c"><h2>3 · Quantity &amp; prices</h2><div class="g">
+<div><label>Plan by</label><select id="mode"><option value="q">Quantity to craft</option><option value="b">Maximum budget</option></select></div>
+<div><label>How many to craft</label><input type="number" id="qty" value="200" min="1"></div>
+<div><label>Maximum budget (silver)</label><input type="number" id="bud" value="1000000" min="0"></div>
+<div><label id="ml">Material price</label><input type="number" id="mp" value="0" min="0"></div>
+<div><label>Buy materials by</label><select id="mb"><option value="i">Instant buy</option><option value="o">Buy order</option></select></div>
+<div><label>Station fee per craft (silver)</label><input type="number" id="sf" value="0" min="0"></div>
+<div><label>Item sell price</label><input type="number" id="ip" value="0" min="0"></div>
+<div><label>Sell item by</label><select id="sb"><option value="o">Sell order</option><option value="i">Instant sell</option></select></div>
+</div><div class="n">Station fee: read it in the crafting window for one craft. Enchanted gear uses the same number of materials, but all of them must be the same enchantment level, so enter that enchanted material’s price. Focus cost is usually higher for enchanted gear, so check it in game. Journals and artifact gear aren’t included.</div></div>
+
+<div class="c"><h2>✅ Ready to go</h2><div id="rdy"></div></div>
+<div class="c"><h2>Total spent</h2><div id="spent"></div></div>
+<div class="c"><h2>Materials returned</h2><div id="ret"></div></div>
+<div class="sc">
+<div class="c"><h2>A · Sell returned materials</h2><div id="A"></div></div>
+<div class="c"><h2>B · Craft extra with returns</h2><div id="B"></div></div>
+</div>
+<button class="btn" id="add">➕ Add this item to my batch</button> <button class="btn s" id="cx" style="display:none">Cancel edit</button>
+<div class="c" style="margin-top:12px"><h2>📦 My batch (several items together)</h2><div id="bl"></div><div style="margin-top:10px"><button class="btn s" id="clr">Clear batch</button></div></div>
+<div class="n">Returns are averages (the game rolls per craft, so real results vary a little). Your batch is saved in this browser.</div>
+</div>
+<script>
+const $=id=>document.getElementById(id),f=n=>Math.round(n).toLocaleString('en-US');
+const subs={Plate:["Soldier","Knight","Guardian"],Leather:["Mercenary","Hunter","Assassin"],Cloth:["Scholar","Cleric","Mage"]};
+const mats={Plate:["Steel Bar","Titanium Steel Bar"],Leather:["Worked Leather","Cured Leather"],Cloth:["Neat Cloth","Fine Cloth"]};
+const slots={Plate:["Armor","Helmet","Boots"],Leather:["Jacket","Hood","Shoes"],Cloth:["Robe","Cowl","Sandals"]};
+function fill(){const c=$('cat').value,cur=$('sub').value;$('sub').innerHTML=subs[c].map(s=>`<option>${s}</option>`).join('');if(subs[c].includes(cur))$('sub').value=cur;
+ [...$('slot').options].forEach((o,i)=>o.text=slots[c][i]);
+ $('ml').textContent='Price per '+mats[c][$('tier').value-4]+(+$('ench').value?' .'+$('ench').value:'')}
+function setMpc(){$('mpc').value=$('slot').value}
+const row=(a,b,c)=>`<div class="r"><span>${a}</span><b${c?` class="${c}"`:''}>${b}</b></div>`;
+function calc(){
+ fill();
+ const foc=$('foc').checked,city=+$('city').value,prem=$('prem').checked;
+ const rrr=foc?(city?.479:.435):(city?.248:.152);
+ $('rrrn').textContent='Resource return rate: '+(rrr*100).toFixed(1)+'%';
+ let q=+$('qty').value||0;const m=+$('mpc').value||1,mp=+$('mp').value||0,ip=+$('ip').value||0,sf=+$('sf').value||0,fc=+$('fc').value||0;
+ const buyFee=$('mb').value=='o'?.025:0;
+ const tax=prem?.04:.08,sellFee=$('sb').value=='o'?tax+.025:tax;
+ const mode=$('mode').value,bud=+$('bud').value||0;
+ $('qty').disabled=mode=='b';$('bud').disabled=mode!='b';
+ const extraOf=n=>{let p=n*m*rrr,e=0,r=0;while(p>=m&&r<60){const k=Math.floor(p/m);e+=k;p=p-k*m+k*m*rrr;r++}return e};
+ const totalOf=n=>n*m*mp*(1+buyFee)+(n+extraOf(n))*sf;
+ if(mode=='b'){if(m*mp+sf<=0)q=0;else{let lo=0,hi=1e7;while(lo<hi){const mid=Math.ceil((lo+hi)/2);if(totalOf(mid)<=bud)lo=mid;else hi=mid-1}q=lo}}
+ const needM=q*m,matCost=needM*mp*(1+buyFee),stCost=q*sf,spent=matCost+stCost;
+ const ret=needM*rrr;
+ // extra crafts loop
+ let pool=ret,extra=0,rounds=0;
+ while(pool>=m&&rounds<60){const k=Math.floor(pool/m);extra+=k;pool=pool-k*m+k*m*rrr;rounds++}
+ const left=pool,exSt=extra*sf,focTot=(q+extra)*fc;
+ const itemNet=ip*(1-sellFee),matSellNet=mp*(1-tax);
+ // A
+ const revA=q*itemNet,matBack=ret*matSellNet,profA=revA+matBack-spent;
+ // B
+ const revB=(q+extra)*itemNet,leftV=left*matSellNet,profB=revB+leftV-spent-exSt;
+ const mn=mats[$('cat').value][$('tier').value-4]+(+$('ench').value?' .'+$('ench').value:''),tot=spent+exSt,step=(n,t)=>`<div class="r"><span><b>${n}.</b> ${t}</span></div>`;
+ $('rdy').innerHTML=(mp<=0||ip<=0?'<div class="n bad">Enter the material price and item sell price to get real numbers.</div>':'')+step(1,`Buy <b>${f(needM)}</b> × ${mn} at ${f(mp)} s (${$('mb').value=='o'?'buy order':'instant buy'}) = <b>${f(matCost)} s</b>`)+step(2,`Craft <b>${f(q)}</b> ${$('sub').value} ${$('slot').selectedOptions[0].text} (T${tn()}) — station fees ${f(stCost)} s${foc?`, focus ${f(q*fc)}`:''}`)+step(3,`You get back about <b>${f(ret)}</b> ${mn} → craft <b>${f(extra)}</b> more${exSt?` (station fees ${f(exSt)} s)`:''}`)+step(4,`Sell <b>${f(q+extra)}</b> items at ${f(ip)} s (${$('sb').value=='o'?'sell order':'instant sell'}) → <b>${f(revB)} s</b> after fees`)+row('Total you pay',f(tot)+' s')+(mode=='b'?row('Your budget',f(bud)+' s')+row('Budget left unused',f(bud-tot)+' s'):'')+row('Expected profit (scenario B)',f(profB)+' s',profB>=0?'good':'bad');
+ last={name:`T${tn()} ${$('sub').value} ${$('slot').selectedOptions[0].text}${foc?' (focus)':''}`,mat:mn,needM,q,extra,paid:tot,profA,profB,foc:(q+extra)*fc};
+ $('spent').innerHTML=row('Materials needed',f(needM))+row('Material cost'+(buyFee?' (incl. 2.5% order fee)':''),f(matCost)+' s')+row('Station fees ('+f(q)+' crafts)',f(stCost)+' s')+row('Total paid',f(spent)+' s')+(foc?row('Focus used (base crafts)',f(q*fc)):'');
+ $('ret').innerHTML=row('Materials returned',f(ret))+row('Extra items you can craft with them',f(extra))+row('Left over after extra crafts',f(left))+row('Total items if you craft extra',f(q+extra));
+ const pc=v=>`<div class="p ${v>=0?'good':'bad'}">Profit: ${f(v)} s</div>`;
+ $('A').innerHTML=row('Items to sell',f(q))+row('Items revenue (after fees)',f(revA)+' s')+row('Returned mats sold',f(matBack)+' s')+row('Total paid',f(spent)+' s')+pc(profA)+row('Profit per item crafted',f(q?profA/q:0)+' s');
+ $('B').innerHTML=row('Items to sell',f(q+extra))+row('Items revenue (after fees)',f(revB)+' s')+row('Leftover mats sold',f(leftV)+' s')+row('Total paid (incl. extra station fees)',f(spent+exSt)+' s')+(foc?row('Total focus used',f(focTot)):'')+pc(profB)+row('Extra profit vs A',f(profB-profA)+' s',profB>=profA?'good':'bad');
+}
+let last=null,B=[],open={},ed=-1;
+const tn=()=>$('tier').value+(+$('ench').value?'.'+$('ench').value:'');
+const ids=['foc','prem','city','fc','tier','cat','ench','sub','mpc','mode','qty','bud','mp','mb','sf','ip','sb'],ttl=['Ready to go','Total spent','Materials returned','A · Sell returned materials','B · Craft extra with returns'];
+const snap=()=>{const o={};ids.forEach(i=>o[i]=$(i).type=='checkbox'?$(i).checked:$(i).value);o.slotI=$('slot').selectedIndex;return o};
+const detRow=x=>`<tr><td colspan="7" style="white-space:normal;text-align:left;background:var(--bg)">${x.det?x.det.map((h,k)=>`<div class="n" style="margin-top:8px;text-transform:uppercase">${ttl[k]}</div>${h}`).join(''):'<div class="n">No details saved for this older row. Press Edit, then Update, to save them.</div>'}</td></tr>`;
+function setEd(i){ed=i;$('add').textContent=i>=0?'\u{1F4BE} Update batch item #'+(i+1):'\u2795 Add this item to my batch';$('cx').style.display=i>=0?'':'none'}
+function load(x){['cat','tier'].forEach(i=>$(i).value=x.inp[i]);fill();ids.forEach(i=>{if(i=='cat'||i=='tier')return;const e=$(i);if(e.type=='checkbox')e.checked=x.inp[i];else if(x.inp[i]!==undefined)e.value=x.inp[i]});$('slot').selectedIndex=x.inp.slotI;calc();window.scrollTo({top:0,behavior:'smooth'})}
+try{B=JSON.parse(localStorage.getItem('albionBatch')||'[]')}catch(e){B=[]}
+function save(){try{localStorage.setItem('albionBatch',JSON.stringify(B))}catch(e){}}
+function rb(){const el=$('bl');if(!B.length){el.innerHTML='<div class="n">Nothing here yet. Set up an item above, press “Add this item to my batch”, then change the item and add the next one.</div>';return}
+ const cl=v=>v>=0?'good':'bad',s=k=>B.reduce((a,x)=>a+x[k],0),ms={};B.forEach(x=>ms[x.mat]=(ms[x.mat]||0)+x.needM);
+ el.innerHTML='<div class="tw"><table><tr><th>Item</th><th>Craft</th><th>+Extra</th><th>Paid</th><th>Profit A</th><th>Profit B</th><th></th></tr>'+B.map((x,i)=>`<tr><td>${x.name}</td><td>${f(x.q)}</td><td>${f(x.extra)}</td><td>${f(x.paid)}</td><td class="${cl(x.profA)}">${f(x.profA)}</td><td class="${cl(x.profB)}">${f(x.profB)}</td><td style="white-space:nowrap"><button class="btn s" data-a="d" data-i="${i}">${open[i]?'Hide':'Details'}</button> <button class="btn s" data-a="e" data-i="${i}">Edit</button> <button class="btn s" data-a="x" data-i="${i}">✕</button></td></tr>${open[i]?detRow(x):''}`).join('')+`<tr><td><b>Total</b></td><td>${f(s('q'))}</td><td>${f(s('extra'))}</td><td><b>${f(s('paid'))}</b></td><td class="${cl(s('profA'))}"><b>${f(s('profA'))}</b></td><td class="${cl(s('profB'))}"><b>${f(s('profB'))}</b></td><td></td></tr></table></div>`
+ +'<div style="margin-top:10px">'+Object.keys(ms).map(k=>row('Buy '+k,f(ms[k]))).join('')+(s('foc')?row('Total focus needed',f(s('foc'))):'')+row('Total you pay',f(s('paid'))+' s')+row('Total profit (B: craft extra)',f(s('profB'))+' s',cl(s('profB')))+row('Total profit (A: sell returns)',f(s('profA'))+' s',cl(s('profA')))+'</div>'}
+$('add').onclick=()=>{if(!last||last.q<=0)return;const it={...last,inp:snap(),det:['rdy','spent','ret','A','B'].map(id=>$(id).innerHTML)};if(ed>=0&&B[ed])B[ed]=it;else B.push(it);setEd(-1);save();rb()};
+$('cx').onclick=()=>setEd(-1);
+$('clr').onclick=()=>{B=[];open={};setEd(-1);save();rb()};
+$('bl').onclick=e=>{const d=e.target.dataset;if(!d||d.i===undefined)return;const i=+d.i;if(d.a=='d'){open[i]=!open[i]}else if(d.a=='e'){if(B[i]&&B[i].inp){setEd(i);load(B[i])}return}else if(d.a=='x'){B.splice(i,1);open={};setEd(-1);save()}rb()};
+document.querySelectorAll('select,input').forEach(e=>e.addEventListener('input',e=>{if(e.target.id=='slot')setMpc();calc()}));
+rb();
+fill();calc();
+</script></body></html>
