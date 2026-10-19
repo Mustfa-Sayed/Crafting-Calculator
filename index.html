@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Albion Crafting Calculator</title>
+<link rel="stylesheet" href="style.css"></head><body><div class="w">
+<h1>⚔ Albion Crafting Calculator (T4 / T5)</h1>
+
+<div class="c"><h2>1 · Bonuses</h2><div class="g">
+<label class="ck"><input type="checkbox" id="foc"> Use focus</label>
+<label class="ck"><input type="checkbox" id="prem" checked> Premium account</label>
+<div><label>City</label><select id="city"><option value="1">Bonus city for this item</option><option value="0">No bonus city</option></select></div>
+<div><label>Focus cost per craft</label><input type="number" id="fc" value="0" min="0"></div>
+</div><div class="n" id="rrrn"></div></div>
+
+<div class="c"><h2>2 · Item</h2><div class="g">
+<div><label>Tier</label><select id="tier"><option value="4">T4</option><option value="5">T5</option></select></div>
+<div><label>Enchantment</label><select id="ench"><option value="0">.0 (normal)</option><option value="1">.1</option><option value="2">.2</option><option value="3">.3</option><option value="4">.4</option></select></div>
+<div><label>Category</label><select id="cat"><option>Plate</option><option>Leather</option><option>Cloth</option></select></div>
+<div><label>Slot</label><select id="slot"><option value="16">Chest</option><option value="8">Head</option><option value="8">Shoes</option></select></div>
+<div><label>Sub-item</label><select id="sub"></select></div>
+<div><label>Materials per craft</label><input type="number" id="mpc" value="16" min="1"></div>
+</div></div>
+
+<div class="c"><h2>3 · Quantity &amp; prices</h2><div class="g">
+<div><label>Plan by</label><select id="mode"><option value="q">Quantity to craft</option><option value="b">Maximum budget</option></select></div>
+<div><label>How many to craft</label><input type="number" id="qty" value="200" min="1"></div>
+<div><label>Maximum budget (silver)</label><input type="number" id="bud" value="1000000" min="0"></div>
+<div><label id="ml">Material price</label><input type="number" id="mp" value="0" min="0"></div>
+<div><label>Buy materials by</label><select id="mb"><option value="i">Instant buy</option><option value="o">Buy order</option></select></div>
+<div><label>Station fee per craft (silver)</label><input type="number" id="sf" value="0" min="0"></div>
+<div><label>Item sell price</label><input type="number" id="ip" value="0" min="0"></div>
+<div><label>Sell item by</label><select id="sb"><option value="o">Sell order</option><option value="i">Instant sell</option></select></div>
+</div><div class="n">Station fee: read it in the crafting window for one craft. Enchanted gear uses the same number of materials, but all of them must be the same enchantment level, so enter that enchanted material’s price. Focus cost is usually higher for enchanted gear, so check it in game. Journals and artifact gear aren’t included.</div></div>
+
+<div class="c"><h2>✅ Ready to go</h2><div id="rdy"></div></div>
+<div class="c"><h2>Total spent</h2><div id="spent"></div></div>
+<div class="c"><h2>Materials returned</h2><div id="ret"></div></div>
+<div class="sc">
+<div class="c"><h2>A · Sell returned materials</h2><div id="A"></div></div>
+<div class="c"><h2>B · Craft extra with returns</h2><div id="B"></div></div>
+</div>
+<button class="btn" id="add">➕ Add this item to my batch</button> <button class="btn s" id="cx" style="display:none">Cancel edit</button>
+<div class="c" style="margin-top:12px"><h2>📦 My batch (several items together)</h2><div id="bl"></div><div style="margin-top:10px"><button class="btn s" id="clr">Clear batch</button></div></div>
+<div class="n">Returns are averages (the game rolls per craft, so real results vary a little). Your batch is saved in this browser.</div>
+</div>
+<script src="script.js"></script></body></html>
